@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ben vs Theo Table Tennis Series</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .score-grid { display: grid; grid-template-columns: 1fr auto auto; }
+        .scoreboard { background-color: #1e4a3b; }
+    </style>
+</head>
+<body class="bg-slate-100 p-4 md:p-12">
+
+    <div class="max-w-3xl mx-auto space-y-8">
+        <header>
+            <h1 class="text-3xl font-bold text-slate-900">Ben vs Theo</h1>
+            <p class="text-slate-500">Tournament Series Dashboard</p>
+        </header>
+
+        <div id="tournament-list" class="space-y-6"></div>
+
+        <div class="mt-12 p-6 bg-white rounded-xl shadow-sm border border-slate-200">
+            <h3 class="text-lg font-bold mb-4">Edit Tournament Data</h3>
+            <textarea id="data-editor" class="w-full h-48 p-4 font-mono text-sm bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none"></textarea>
+            <button onclick="updateData()" class="mt-4 px-6 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 font-semibold">Update Dashboard</button>
+        </div>
+    </div>
+
+    <script>
+        let tournamentData = {
+            "uriage": { "name": "Uriage Poolside", "date": "July 11, 2026", "logo": "uriage.png", "scores": [[11, 8], [11, 5]] },
+            "touchmark": { "name": "Touchmark Tournament", "date": "July 31, 2026", "logo": "touchmark.png" },
+            "portland": { "name": "Portland Garage", "date": "August 15, 2026", "logo": "portland.png" }
+        };
+
+        function renderData() {
+            const list = document.getElementById('tournament-list');
+            list.innerHTML = '';
+            
+            for (const key in tournamentData) {
+                const t = tournamentData[key];
+                const div = document.createElement('div');
+                div.className = "bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden";
+                
+                if (t.scores) {
+                    // Render Scoreboard
+                    div.innerHTML = `
+                        <div class="p-4 bg-slate-50 border-b border-slate-100 font-semibold text-slate-700">${t.name}</div>
+                        <div class="scoreboard text-white font-bold text-xl p-6">
+                            <div class="score-grid gap-y-2">
+                                <div class="uppercase tracking-wide text-emerald-100">THEO</div>
+                                <div class="w-12 text-center">${t.scores[0][0]}</div>
+                                <div class="w-12 text-center">${t.scores[1][0]}</div>
+                                <div class="uppercase tracking-wide opacity-80 border-t border-white/10 pt-2">BEN</div>
+                                <div class="w-12 text-center border-t border-white/10 pt-2 opacity-80">${t.scores[0][1]}</div>
+                                <div class="w-12 text-center border-t border-white/10 pt-2 opacity-80">${t.scores[1][1]}</div>
+                            </div>
+                        </div>`;
+                } else {
+                    // Render Upcoming
+                    div.className = "bg-white rounded-xl p-6 shadow-sm border-l-4 border-emerald-500 flex items-center justify-between";
+                    div.innerHTML = `
+                        <div>
+                            <h2 class="text-xl font-bold">${t.name}</h2>
+                            <p class="text-sm text-emerald-600 font-semibold mt-1">Status: Upcoming</p>
+                        </div>
+                        <div class="text-2xl font-black text-slate-300">${t.date.split(',')[0].toUpperCase()}</div>`;
+                }
+                list.appendChild(div);
+            }
+        }
+
+        document.getElementById('data-editor').value = JSON.stringify(tournamentData, null, 4);
+
+        function updateData() {
+            try {
+                tournamentData = JSON.parse(document.getElementById('data-editor').value);
+                renderData();
+            } catch (e) {
+                alert("Invalid JSON format!");
+            }
+        }
+
+        window.onload = renderData;
+    </script>
+</body>
+</html>
